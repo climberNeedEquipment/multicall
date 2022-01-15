@@ -40,7 +40,7 @@
     "polygon"
   ],
   "author": "DeFiFoFum",
-  "license": "APGL-3.0",
+  "license": "AGPL-3.0-or-later",
   "bugs": {
     "url": "https://github.com/DeFiFoFum/multicall/issues"
   },
