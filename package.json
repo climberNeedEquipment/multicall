@@ -1,0 +1,73 @@
+{
+  "name": "@defifofum/multicall",
+  "version": "0.0.1",
+  "description": "Typescript package used to batch smart contract read calls into a single tx through the use of a multicall contract.",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "yarn test",
+    "compile": "truffle compile",
+    "compile:all": "truffle compile --all",
+    "migrate:dev": "truffle migrate --network development --reset",
+    "migrate:bsc": "truffle migrate --network bsc",
+    "migrate:bsc-testnet": "truffle migrate --network bsc-testnet",
+    "migrate:polygon": "truffle migrate --network polygon",
+    "migrate:polygon-testnet": "truffle migrate --network polygon-testnet",
+    "verify:bsc": "truffle run verify Multicall --network bsc",
+    "verify:bsc-testnet": "truffle run verify Multicall --network bsc-testnet",
+    "verify:polygon": "truffle run verify Multicall --network polygon",
+    "verify:polygon-testnet": "truffle run verify Multicall --network polygon-testnet",
+    "build": "tsc",
+    "watch": "tsc-watch --onSuccess \"node ./dist/demo.js\"",
+    "lint": "eslint src --ext .js,.jsx,.ts,.tsx"
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx,ts,tsx}": [
+      "eslint . --fix",
+      "git add"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DeFiFoFum/multicall.git"
+  },
+  "keywords": [
+    "typescript",
+    "solidity",
+    "ethereum",
+    "binance",
+    "smart",
+    "chain",
+    "polygon"
+  ],
+  "author": "DeFiFoFum",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DeFiFoFum/multicall/issues"
+  },
+  "homepage": "https://github.com/DeFiFoFum/multicall#readme",
+  "devDependencies": {
+    "@truffle/hdwallet-provider": "^2.0.0",
+    "@tsconfig/recommended": "^1.0.1",
+    "@types/jest": "^26.0.24",
+    "@typescript-eslint/eslint-plugin": "^4.29.0",
+    "@typescript-eslint/parser": "^4.29.0",
+    "dotenv": "^10.0.0",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.23.4",
+    "husky": "^7.0.1",
+    "jest": "^27.0.6",
+    "lint-staged": "^11.1.2",
+    "prettier": "^2.3.2",
+    "pretty-quick": "^3.1.1",
+    "truffle": "^5.4.26",
+    "truffle-plugin-verify": "^0.5.20",
+    "ts-jest": "^27.0.4",
+    "ts-node": "^10.4.0",
+    "tsc-watch": "^4.4.0",
+    "typescript": "^4.3.5"
+  },
+  "dependencies": {
+    "ethers": "^5.4.4"
+  }
+}
