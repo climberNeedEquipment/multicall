@@ -34,7 +34,7 @@ export async function multicall(
 
     if(multicallAddress == undefined) {
         // No contract deployed for chainId
-        return undefined;
+        throw new Error(`No multicall defined for chainId ${chainId}.`);
     }
     // setup contracts
     const multicallContract = new Contract(multicallAddress, MulticallBuild.abi, provider);
