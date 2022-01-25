@@ -6,7 +6,7 @@
  * @param len Max length to max each chunk (the final array will likely be lower than this len)
  * @returns any[][]
  */
-export function chunkArray(arr: any[], len: number): any[][] {
+export function chunkArray<T>(arr: T[], len: number): T[][] {
     const chunks = [];
     const n = arr.length;
     let i = 0;
