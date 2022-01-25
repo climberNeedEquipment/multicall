@@ -18,7 +18,8 @@
     "verify:polygon-testnet": "truffle run verify Multicall --network polygon-testnet",
     "build": "tsc",
     "watch": "tsc-watch --onSuccess \"node ./dist/demo.js\"",
-    "lint": "eslint src --ext .js,.jsx,.ts,.tsx"
+    "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
+    "example": "yarn build && ts-node ./examples/multicallDynamicAbi.ts"
   },
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx}": [
@@ -65,7 +66,7 @@
     "ts-jest": "^27.0.4",
     "ts-node": "^10.4.0",
     "tsc-watch": "^4.4.0",
-    "typescript": "^4.3.5"
+    "typescript": "^4.5.5"
   },
   "dependencies": {
     "ethers": "^5.4.4"
