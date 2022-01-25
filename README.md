@@ -30,6 +30,18 @@ yarn add @defifofum/multicall
 ## Usage
 Here is an example of how to use the multicall function.
 
+### Dynamic ABI 
+
+See [multicallDynamicAbi](./examples/multicallDynamicAbi.ts) example for details on how to use multicall to make multiple calls with different ABIs. See the example output below.
+
+To run the example: `yarn example`  
+
+```javascript
+import { multicallDynamicAbi, AbiCall } from '@defifofum/multicall';
+```
+
+### Single ABI 
+
 ```javascript
 import { multicall, Call } from '@defifofum/multicall';
 
@@ -63,3 +75,9 @@ const cleanedData = returnedData.map((dataArray, index) => {
 
 ## Configuration
 If you would like to deploy a multicall contract you will need to clone this repo and provide environment variables in a `.env` file based on `.env.example`. These variables are used to deploy and verify the contract. 
+
+
+## Example Output
+This example shows 5000 calls being made through this tool with two different ABIs mixed in. The run time is 8761ms.
+
+![](images/multicall-dynamic-abi.png)

@@ -1,7 +1,5 @@
-// import { multicallDynamicAbi, AbiCall } from '../src/index';
-// import { multicallDynamicAbi, AbiCall } from '../src/multicall/multicall';
-const { multicallDynamicAbi } = require('../dist/index')
 // import { multicallDynamicAbi, AbiCall } from '@defifofum/multicall';
+const { multicallDynamicAbi } = require('../dist/index')
 
 const RPC_PROVIDER = 'https://bsc-dataseed.binance.org/';
 
