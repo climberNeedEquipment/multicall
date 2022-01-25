@@ -102,6 +102,7 @@ async function runExampleMulticallDynamicAbi() {
     }
 
     // setup multicall
+    // AbiCall[]
     const callDataArray: any[] = [];
     for (const call of expandedCalls) {
         callDataArray.push({
@@ -120,6 +121,7 @@ async function runExampleMulticallDynamicAbi() {
     }[] = [];
     // send multicall data
     if (callDataArray.length) {
+        // multicallDynamicAbi(rpcUrl: string, calls: AbiCall[], maxCallsPerTx = 1000)
         const returnedData = await multicallDynamicAbi(RPC_PROVIDER, callDataArray);
         // Pull addresses out of return data
         data = returnedData.map((dataArray, index) => {
