@@ -119,7 +119,7 @@ export async function multicallDynamicAbi(
  * Batch multiple calls to contracts with the same abi to reduce rpc calls and increase response time. 
  * 
  * @param provider Ethers provider or Url of RPC endpoint to make the call to
- * @param calls Array of Array of AbiCall. Return values match the shape of this array
+ * @param indexedCalls Array of Array of AbiCall. Return values match the shape of this array
  * @param options Optional parameter to set the options of the multicall 
  * @param options.maxCallsPerTx (default 1000) limit the number of calls per multicall call 
  * @param options.chainId Pass the chainId of the network to limit an extra RPC call
