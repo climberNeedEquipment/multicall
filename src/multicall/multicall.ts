@@ -15,33 +15,43 @@ export interface Call {
 /**
  * Batch multiple calls to contracts with the same abi to reduce rpc calls and increase response time. 
  * 
- * @param rpcUrl Url of RPC endpoint to make the call to
+ * @param provider Ethers provider or Url of RPC endpoint to make the call to
  * @param abi abi generated from the contract code 
  * @param calls Array of Call objects to run through multicall
  * @param maxCallsPerTx (default 1000) limit the number of calls per multicall call 
  * @returns Array of array of return values from each call. Index 0 is the first return value and so on.
  */
 export async function multicall(
-    rpcUrl: string,
-    abi: any[],
+    provider: string | providers.BaseProvider | providers.JsonRpcProvider,
+    abi: (any | Fragment)[], // Abi of the call to make 
     calls: Call[],
-    maxCallsPerTx = 1000
+    options: {
+        maxCallsPerTx: number;
+        chainId?: number;
+    } = {
+            maxCallsPerTx: 1000
+        }
 ): Promise<any[][] | undefined> {
     // setup provider
-    const provider = getDefaultProvider(rpcUrl);
+    const currentProvider = typeof provider == 'string' ? getDefaultProvider(provider) : provider;
 
-    const { chainId } = await provider.getNetwork();
-    const multicallAddress = multicallContracts[chainId];
+    let currentChainId = options.chainId;
+    if (!currentChainId) {
+        const { chainId: returnedChainId } = await currentProvider.getNetwork();
+        currentChainId = returnedChainId;
+    }
+
+    const multicallAddress = multicallContracts[currentChainId];
 
     if (multicallAddress == undefined) {
         // No contract deployed for chainId
-        throw new Error(`No multicall defined for chainId ${chainId}.`);
+        throw new Error(`No multicall defined for chainId ${currentChainId}.`);
     }
     // setup contracts
-    const multicallContract = new Contract(multicallAddress, MulticallBuild.abi, provider);
+    const multicallContract = new Contract(multicallAddress, MulticallBuild.abi, currentProvider);
     const itf = new Interface(abi);
     // chunk calls to prevent RPC overflow
-    const chunkedCalls = chunkArray(calls, maxCallsPerTx);
+    const chunkedCalls = chunkArray(calls, options.maxCallsPerTx);
     // Process calls
     let finalData: any[] = []
     for (const currentCalls of chunkedCalls) {
@@ -132,12 +142,12 @@ export async function multicallDynamicAbiIndexedCalls(
         maxCallsPerTx?: number;
         chainId?: number;
     } = {
-        maxCallsPerTx: 1000
-    }
+            maxCallsPerTx: 1000
+        }
 ): Promise<any[][] | any[]> {
     const allCalls = indexedCalls.reduce((aggregatedCalls, currentCalls) => [...aggregatedCalls, ...currentCalls]);
-    const multicallData = await multicallDynamicAbi(provider, allCalls, { 
-        maxCallsPerTx: options.maxCallsPerTx, 
+    const multicallData = await multicallDynamicAbi(provider, allCalls, {
+        maxCallsPerTx: options.maxCallsPerTx,
         chainId: options.chainId
     });
 

@@ -116,7 +116,9 @@ const returnedData = await multicall(
     RPC_PROVIDER,   // RPC url. ChainId is inferred from this to point to the proper contract
     ERC20.abi,      // abi of contract that is being called
     callDataArray,  // Call[]
-    1000            // This param defaults to 1000. It sets the max batch limit per multicall call
+    {
+        maxCallsPerTx: 1000, // This param defaults to 1000. It sets the max batch limit per multicall call
+    }                
 );
 // Pull addresses out of return data
 const cleanedData = returnedData.map((dataArray, index) => {
