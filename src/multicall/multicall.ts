@@ -33,15 +33,12 @@ export async function multicall(
     provider: string | providers.BaseProvider | providers.JsonRpcProvider,
     abi: (any | Fragment)[], // Abi of the call to make 
     calls: Call[],
-    options: MultiCallOptions = {
-        maxCallsPerTx: 1000,
-        blockTag: 'latest',
-    }
+    { maxCallsPerTx = 1000, blockTag = 'latest', chainId }: MultiCallOptions = {}
 ): Promise<any[][] | undefined> {
     // setup provider
     const currentProvider = typeof provider == 'string' ? getDefaultProvider(provider) : provider;
 
-    let currentChainId = options.chainId;
+    let currentChainId = chainId;
     if (!currentChainId) {
         const { chainId: returnedChainId } = await currentProvider.getNetwork();
         currentChainId = returnedChainId;
@@ -57,12 +54,12 @@ export async function multicall(
     const multicallContract = new Contract(multicallAddress, MulticallBuild.abi, currentProvider);
     const itf = new Interface(abi);
     // chunk calls to prevent RPC overflow
-    const chunkedCalls = chunkArray(calls, options.maxCallsPerTx);
+    const chunkedCalls = chunkArray(calls, maxCallsPerTx);
     // Process calls
     let finalData: any[] = []
     for (const currentCalls of chunkedCalls) {
         const calldata = currentCalls.map((call) => [call.address.toLowerCase(), itf.encodeFunctionData(call.functionName, call.params)])
-        const { returnData } = await multicallContract.callStatic.aggregate(calldata, { blockTag: options.blockTag });
+        const { returnData } = await multicallContract.callStatic.aggregate(calldata, { blockTag });
         const res = returnData.map((data: any, i: number) => itf.decodeFunctionResult(currentCalls[i].functionName, data))
         finalData = [...finalData, ...res];
     }
@@ -91,15 +88,12 @@ export interface AbiCall {
 export async function multicallDynamicAbi(
     provider: string | providers.BaseProvider | providers.JsonRpcProvider,
     calls: AbiCall[],
-    options: MultiCallOptions = {
-        maxCallsPerTx: 1000,
-        blockTag: 'latest',
-    }
+    { maxCallsPerTx = 1000, blockTag = 'latest', chainId }: MultiCallOptions = {}
 ): Promise<any[][] | undefined> {
     // setup provider
     const currentProvider = typeof provider == 'string' ? getDefaultProvider(provider) : provider;
 
-    let currentChainId = options.chainId;
+    let currentChainId = chainId;
     if (!currentChainId) {
         const { chainId: returnedChainId } = await currentProvider.getNetwork();
         currentChainId = returnedChainId;
@@ -114,14 +108,14 @@ export async function multicallDynamicAbi(
     // setup contracts
     const multicallContract = new Contract(multicallAddress, MulticallBuild.abi, currentProvider);
     // chunk calls to prevent RPC overflow
-    const chunkedCalls = chunkArray(calls, options.maxCallsPerTx);
+    const chunkedCalls = chunkArray(calls, maxCallsPerTx);
     // Process calls
     let finalData: any[] = [];
     for (let index = 0; index < chunkedCalls.length; index++) {
         const currentCalls = chunkedCalls[index];
         const currentInterfaces = currentCalls.map((currentCall) => new Interface(currentCall.abi));
         const calldata = currentCalls.map((call, i) => [call.address.toLowerCase(), currentInterfaces[i].encodeFunctionData(call.functionName, call.params)]);
-        const { returnData } = await multicallContract.callStatic.aggregate(calldata, { blockTag: options.blockTag });
+        const { returnData } = await multicallContract.callStatic.aggregate(calldata, { blockTag });
         const res = returnData.map((data: any, i: number) => currentInterfaces[i].decodeFunctionResult(currentCalls[i].functionName, data));
         finalData = [...finalData, ...res];
     }
@@ -142,15 +136,12 @@ export async function multicallDynamicAbi(
 export async function multicallDynamicAbiIndexedCalls(
     provider: string | providers.BaseProvider | providers.JsonRpcProvider,
     indexedCalls: AbiCall[][],
-    options: MultiCallOptions = {
-        maxCallsPerTx: 1000,
-        blockTag: 'latest',
-    }
+    { maxCallsPerTx = 1000, blockTag = 'latest', chainId }: MultiCallOptions = {}
 ): Promise<any[][] | any[]> {
     // setup provider
     const currentProvider = typeof provider == 'string' ? getDefaultProvider(provider) : provider;
 
-    let currentChainId = options.chainId;
+    let currentChainId = chainId;
     if (!currentChainId) {
         const { chainId: returnedChainId } = await currentProvider.getNetwork();
         currentChainId = returnedChainId;
@@ -158,9 +149,9 @@ export async function multicallDynamicAbiIndexedCalls(
 
     const allCalls = indexedCalls.reduce((aggregatedCalls, currentCalls) => [...aggregatedCalls, ...currentCalls]);
     const multicallData = await multicallDynamicAbi(currentProvider, allCalls, {
-        maxCallsPerTx: options.maxCallsPerTx,
+        maxCallsPerTx,
         chainId: currentChainId,
-        blockTag: options.blockTag,
+        blockTag,
     });
 
     let returnData = [];
