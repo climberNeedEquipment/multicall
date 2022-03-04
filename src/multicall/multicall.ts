@@ -6,7 +6,7 @@ import { multicallContracts } from '../config'
 
 import MulticallBuild from './Multicall.json'
 
-type BlockTag = number | 'latest' | 'earliest' | 'pending';
+export type BlockTag = number | 'latest' | 'earliest' | 'pending';
 
 /**
  * Configurable options for multicall calls
