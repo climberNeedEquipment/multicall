@@ -16,7 +16,7 @@ type BlockTag = number | 'latest' | 'earliest' | 'pending';
  * customMulticallAddress (optional) - Pass in a user defined multicall contract to use. If using an archive node, 
  *      the multicall contracts in this repo may have been deployed AFTER the data you are looking for.
  */
-interface MultiCallOptions {
+export interface MultiCallOptions {
     maxCallsPerTx?: number;
     chainId?: number;
     blockTag?: BlockTag;
