@@ -9,7 +9,7 @@ import MulticallBuild from './Multicall.json'
 type BlockTag = number | 'latest' | 'earliest' | 'pending';
 
 interface MultiCallOptions {
-    maxCallsPerTx: number;
+    maxCallsPerTx?: number;
     chainId?: number;
     blockTag?: BlockTag;
 }
