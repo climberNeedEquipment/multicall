@@ -37,7 +37,64 @@ See [multicallDynamicAbi](./examples/multicallDynamicAbi.ts) example for details
 To run the example: `yarn example`  
 
 ```javascript
-import { multicallDynamicAbi, AbiCall } from '@defifofum/multicall';
+import { multicallDynamicAbi, multicallDynamicAbiIndexedCalls, AbiCall } from '@defifofum/multicall';
+```
+
+`multicallDynamicAbiIndexedCalls` is an extended function of `multicallDynamicAbi` which allows batching related calls into separate arrays for easier decoding. Internally, the function combines all of the calls into a single call (up to the `maxBatchPerCall`) and puts them back into their proper batch relation. 
+
+```javascript
+export interface AbiCall {
+    address: string // Address of the contract
+    functionName: string // Function name on the contract (example: balanceOf)
+    params?: any[] // Function params
+    abi: (any | Fragment)[] // Abi of the call to make 
+}
+```
+
+```javascript
+/**
+ * Batch multiple calls to contracts with the same abi to reduce rpc calls and increase response time. 
+ * 
+ * @param provider Ethers provider or Url of RPC endpoint to make the call to
+ * @param calls Array of AbiCall objects to run through multicall
+ * @param options Optional parameter to set the options of the multicall 
+ * @param options.maxCallsPerTx (default 1000) limit the number of calls per multicall call 
+ * @param options.chainId Pass the chainId of the network to limit an extra RPC call
+ * @returns Array of array of return values from each call. Index 0 is the first return value and so on.
+ */
+export async function multicallDynamicAbi(
+    provider: string | providers.BaseProvider | providers.JsonRpcProvider,
+    calls: AbiCall[],
+    options: {
+        maxCallsPerTx: number;
+        chainId?: number;
+    } = {
+            maxCallsPerTx: 1000
+        }
+): Promise<any[][] | undefined> 
+```
+
+```javascript
+/**
+ * Batch multiple calls to contracts with the same abi to reduce rpc calls and increase response time. 
+ * 
+ * @param provider Ethers provider or Url of RPC endpoint to make the call to
+ * @param indexedCalls Array of Array of AbiCall. Return values match the shape of this array
+ * @param options Optional parameter to set the options of the multicall 
+ * @param options.maxCallsPerTx (default 1000) limit the number of calls per multicall call 
+ * @param options.chainId Pass the chainId of the network to limit an extra RPC call
+ * @returns Array of array of return values from each call. Index 0 is the first return value and so on.
+ */
+export async function multicallDynamicAbiIndexedCalls(
+    provider: string | providers.BaseProvider | providers.JsonRpcProvider,
+    indexedCalls: AbiCall[][],
+    options: {
+        maxCallsPerTx?: number;
+        chainId?: number;
+    } = {
+        maxCallsPerTx: 1000
+    }
+): Promise<any[][] | any[]>
 ```
 
 ### Single ABI 
@@ -59,7 +116,9 @@ const returnedData = await multicall(
     RPC_PROVIDER,   // RPC url. ChainId is inferred from this to point to the proper contract
     ERC20.abi,      // abi of contract that is being called
     callDataArray,  // Call[]
-    1000            // This param defaults to 1000. It sets the max batch limit per multicall call
+    {
+        maxCallsPerTx: 1000, // This param defaults to 1000. It sets the max batch limit per multicall call
+    }                
 );
 // Pull addresses out of return data
 const cleanedData = returnedData.map((dataArray, index) => {

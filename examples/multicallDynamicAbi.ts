@@ -1,10 +1,11 @@
 // import { multicallDynamicAbi, AbiCall } from '@defifofum/multicall';
-const { multicallDynamicAbi } = require('../dist/index')
+const { multicallDynamicAbi, multicallDynamicAbiIndexedCalls } = require('../dist/index')
+import { getDefaultProvider, utils } from 'ethers'
 
 const RPC_PROVIDER = 'https://bsc-dataseed.binance.org/';
 
 const ABIs = {
-    getStakeTokenFeeBalance: [
+    getStakeTokenFeeBalance: [utils.Fragment.from(
         {
             "inputs": [],
             "name": "getStakeTokenFeeBalance",
@@ -18,8 +19,8 @@ const ABIs = {
             "stateMutability": "view",
             "type": "function"
         }
-    ],
-    totalSupply: [
+    )],
+    totalSupply: [utils.Fragment.from(
         {
             "inputs": [],
             "name": "totalSupply",
@@ -33,7 +34,7 @@ const ABIs = {
             "stateMutability": "view",
             "type": "function"
         }
-    ],
+    )],
 }
 
 interface CallData {
@@ -121,8 +122,11 @@ async function runExampleMulticallDynamicAbi() {
     }[] = [];
     // send multicall data
     if (callDataArray.length) {
+        // Can pass in the direct RPC_PROVIDER url as well
+        const provider = getDefaultProvider(RPC_PROVIDER);
         // multicallDynamicAbi(rpcUrl: string, calls: AbiCall[], maxCallsPerTx = 1000)
-        const returnedData = await multicallDynamicAbi(RPC_PROVIDER, callDataArray);
+        // const returnedData = await multicallDynamicAbi(provider, callDataArray);
+        const returnedData = (await multicallDynamicAbiIndexedCalls(provider, [callDataArray]))[0];
         // Pull addresses out of return data
         data = returnedData.map((dataArray, index) => {
             return {
