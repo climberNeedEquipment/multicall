@@ -1,6 +1,7 @@
 import { ChainId } from "./networks"
 
 export const multicallContracts: Partial<Record<ChainId, string>> = {
+  [ChainId.KLAY_MAINNET]:'0xAa8e66d4721E2fD5Fbee8B7b42f59BAd1A6a522C',
   [ChainId.BSC_MAINNET]: '0x7D82217018FAAcf81d4726134939C12300fF6B9E',
   [ChainId.BSC_TESTNET]: '0x7b6838b362f05bA2a0CAA8F9c1B34F3D619e7413',
   [ChainId.POLYGON_MAINNET]: '0x45b673A3a4bEa062e7cEF9149a0F2277B00c83b4',
